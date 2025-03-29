@@ -76,73 +76,47 @@ Client-server chat applications are foundational to real-time communication over
 ## Server
 
 ~~~
-import socket
-def server_program():
-    # get the hostname
-    host = socket.gethostname()
-    port = 5000  # initiate port no above 1024
-
-    server_socket = socket.socket()  # get instance
-    # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, port))  # bind host address and port together
-
-    # configure how many client the server can listen simultaneously
-    server_socket.listen(2)
-    conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))
-    while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        print("from connected user: " + str(data))
-        data = input(' -> ')
-        conn.send(data.encode())  # send data to the client
-
-    conn.close()  # close the connection
-
-
-if __name__ == '__main__':
-    server_program()
+import socket 
+s=socket.socket() 
+s.connect(('localhost',8000)) 
+print(s.getsockname()) 
+print(s.recv(1024).decode()) 
+s.send("acknowledgement recived from the server".encode()) 
+      
 ~~~
 ## client
 ~~~
 import socket
+ from datetime import datetime
+ 
+s=socket.socket()
+ 
+s.bind(('localhost',8000))
+ 
+s.listen(5)
+ c,addr=s.accept()
+ print("Client Address : ",addr)
+ 
+now = datetime.now()
+ 
+c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
+ ack=c.recv(1024).decode()
+ 
+if ack:
+    print(ack)
+ 
+c.close()
 
-
-def client_program():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
-
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
-
-    message = input(" -> ")  # take input
-
-    while message.lower().strip() != 'bye':
-        client_socket.send(message.encode())  # send message
-        data = client_socket.recv(1024).decode()  # receive response
-
-        print('Received from server: ' + data)  # show in terminal
-
-        message = input(" -> ")  # again take input
-
-    client_socket.close()  # close the connection
-
-
-if __name__ == '__main__':
-    client_program()
 ~~~
 ## Output
 ## server
+![image](https://github.com/user-attachments/assets/c9644b24-58b3-4533-a5f0-aa3eaec286ec)
 
-![365598376-1c188541-4731-498f-8052-13c7c44088fd](https://github.com/user-attachments/assets/f3b8b017-c9ef-4200-8df2-6da44d528dac)
 
 ## client
 
+![image](https://github.com/user-attachments/assets/8f7300b9-7fde-4892-914c-571554f696de)
 
-![365598263-8b7d7b03-a82b-48d2-b7fb-ef19718a312f](https://github.com/user-attachments/assets/d0519ae4-1e8e-4c85-9eb6-6044e4da8ff8)
 
 ## Result:
 
