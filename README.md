@@ -76,46 +76,60 @@ Client-server chat applications are foundational to real-time communication over
 ## Server
 
 ~~~
-import socket 
-s=socket.socket() 
-s.connect(('localhost',8000)) 
-print(s.getsockname()) 
-print(s.recv(1024).decode()) 
-s.send("acknowledgement recived from the server".encode()) 
+import socket
+from base64 import decode
+from operator import truediv
+
+server =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(('localhost', 9999))
+server.listen()
+client,addr=server.accept()
+
+done = False
+
+while not done:
+    msg = client.recv(1024).decode('utf-8')
+
+    if msg == 'quit':
+        done = True
+    else:
+        print(msg)
+
+    client.send(input("Message ").encode('utf-8'))
+
+
+client.close()
+server.close()
       
 ~~~
 ## client
 ~~~
+
 import socket
- from datetime import datetime
- 
-s=socket.socket()
- 
-s.bind(('localhost',8000))
- 
-s.listen(5)
- c,addr=s.accept()
- print("Client Address : ",addr)
- 
-now = datetime.now()
- 
-c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
- ack=c.recv(1024).decode()
- 
-if ack:
-    print(ack)
- 
-c.close()
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+client.connect(("localhost", 9999))
+
+done=False
+
+while not done:
+    client.send(input("Message ").encode('utf-8'))
+    msg = client.recv(1024).decode('utf-8')
+
+    if msg == 'quit':
+        done=True
+    else:
+        print(msg)
+
+
+
+client.close()
 
 ~~~
 ## Output
-## server
-![image](https://github.com/user-attachments/assets/c9644b24-58b3-4533-a5f0-aa3eaec286ec)
 
-
-## client
-
-![image](https://github.com/user-attachments/assets/8f7300b9-7fde-4892-914c-571554f696de)
+![image](https://github.com/user-attachments/assets/242ffb4e-296b-4c23-9e3f-1820e7a245fc)
 
 
 ## Result:
